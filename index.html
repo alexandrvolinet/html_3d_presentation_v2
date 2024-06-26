@@ -5,13 +5,18 @@
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>3d presentation</title>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
   <style>
     body, html {
       margin: 0;
-      overflow-x: hidden;
+      overflow: hidden;
       height: 200vh;
       background-color: #010912;
+    }
+    a {
+      text-decoration: none;
     }
     #bg {
       position: fixed;
@@ -25,11 +30,10 @@
     }
     #button {
       position: fixed;
-      top: 60%;
-      left: 50.55%;
+      top: 50%;
       transform: translate(-50%, -50%);
       display: none; /* Initially hidden */
-      padding: 20px 30px;
+      padding: 15px 25px;
       font-size: 16px;
       color: white;
       background-color: #007bff;
@@ -40,7 +44,8 @@
       opacity: 0;
       transition: opacity 0.3s ease-in-out;
       box-shadow: 0px 0px 25px 0px #007bff;
-      font-family: 'Roboto', sans-serif;
+      font-family: "Roboto", sans-serif;
+      font-weight: 400;
     }
     #button.pulsate {
       animation: pulsate 1.2s infinite;
@@ -68,12 +73,32 @@
   </style>
 </head>
 <body>
-  <div id="loading-screen">Loading...</div> <!-- Add this line -->
+  <div id="loading-screen">Loading...</div>
   <canvas id="bg"></canvas>
   <video id="video" playsinline autoplay loop muted>
     <source src="video.mp4" type="video/mp4">
   </video>
-  <a id="button" class="pulsate" href="https://t.me/consensus_designer">@consensus_designer</a>
+  <a id="button" class="pulsate" href="https://t.me/CoinpaymentsGroupBot">@CoinpaymentsGroupBot</a>
+  <script type="module">
+    function calculateLeftPercentage(screenWidth) {
+      const x0 = 320;
+      const y0 = 50.7;
+      const x1 = 3760;
+      const y1 = 50.15;
+
+      return y0 + (y1 - y0) * (screenWidth - x0) / (x1 - x0);
+    }
+
+    function updateButtonPosition() {
+      const screenWidth = window.innerWidth;
+      const leftPercentage = calculateLeftPercentage(screenWidth);
+      const button = document.getElementById('button');
+      button.style.left = leftPercentage + '%';
+    }
+
+    window.addEventListener('resize', updateButtonPosition);
+    window.addEventListener('load', updateButtonPosition);
+  </script>
   <script type="module" src="/main.js"></script>
 </body>
 </html>
