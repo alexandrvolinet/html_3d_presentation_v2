@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import gsap from 'gsap';
 
+
 // Setup
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -10,7 +11,7 @@ const renderer = new THREE.WebGLRenderer({ canvas: document.querySelector('#bg')
 renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.shadowMap.enabled = true; // Enable shadow map
-camera.position.setZ(5.1); // Start camera a bit further back
+camera.position.setZ(6); // Start camera a bit further back
 camera.position.setY(-1.5);
 camera.position.setX(0); // Center camera
 camera.rotation.x = Math.PI / 25; // Tilt camera up
@@ -81,14 +82,28 @@ scene.add(pointLight);
 const ambientLight = new THREE.AmbientLight(0x404040); // soft white light
 scene.add(ambientLight);
 
+// Cool white glow lights
+const coolWhiteLight1 = new THREE.PointLight(0xe0ffff, 1, 10);
+coolWhiteLight1.position.set(0, -1, 2);
+scene.add(coolWhiteLight1);
+
+const coolWhiteLight2 = new THREE.PointLight(0xe0ffff, 0.5, 10);
+coolWhiteLight2.position.set(0, -1, -2);
+scene.add(coolWhiteLight2);
+
+// Additional white light
+const additionalLight = new THREE.PointLight(0xffffff, 1.5, 10);
+additionalLight.position.set(-5, 0, 0); // Position at 270 degrees
+scene.add(additionalLight);
+
 // Background
 const backgroundColor = new THREE.Color(0x010912);
 scene.background = backgroundColor;
 
 // Create pedestals with different sizes
-const pedestalGeometry1 = new THREE.CylinderGeometry(1.5, 1.5, 1, 64);
-const pedestalGeometry2 = new THREE.CylinderGeometry(2.5, 2.5, 1, 64);
-const pedestalGeometry3 = new THREE.CylinderGeometry(2.7, 2.7, 1, 64);
+const pedestalGeometry1 = new THREE.CylinderGeometry(1.2, 1.2, 1, 64);
+const pedestalGeometry2 = new THREE.CylinderGeometry(2.2, 2.2, 1, 64);
+const pedestalGeometry3 = new THREE.CylinderGeometry(2.3, 2.27, 1, 64);
 const pedestalMaterial = new THREE.MeshPhongMaterial({ color: 0x080B10 });
 const pedestal1 = new THREE.Mesh(pedestalGeometry1, pedestalMaterial);
 const pedestal2 = new THREE.Mesh(pedestalGeometry2, pedestalMaterial);
@@ -104,40 +119,6 @@ pedestal3.receiveShadow = true;
 
 scene.add(pedestal1, pedestal2, pedestal3);
 
-// Load coin model and add to scene
-const coinLoader = new GLTFLoader();
-let coins = [];
-coinLoader.load('/coin.gltf', function (gltf) {
-  const positions = [
-    [2, 0.1, -1],
-    [2, 1, -2],
-    [-1.5, 1, 0],
-    [-1.5, -1, 2],
-    [-2, 1.5, 2]
-  ];
-
-  positions.forEach((position, index) => {
-    let coin = gltf.scene.clone();
-    coin.scale.set(0.3, 0.3, 0.3); // Set coin size
-    coin.position.set(...position); // Set initial position
-
-    let axis = ['x', 'y', 'z'][Math.floor(Math.random() * 3)]; // Randomly choose an axis to rotate
-    let direction = Math.random() > 0.5 ? 1 : -1; // Randomly choose direction
-
-    gsap.to(coin.rotation, {
-      [axis]: direction * Math.PI * 2,
-      duration: 5,
-      repeat: -1,
-      ease: "none"
-    });
-
-    scene.add(coin);
-    coins.push(coin);
-  });
-}, undefined, function (error) {
-  console.error(error);
-});
-
 // Video loading event
 video.addEventListener('canplaythrough', () => {
   assetsLoaded.video = true;
@@ -145,7 +126,7 @@ video.addEventListener('canplaythrough', () => {
 
   setTimeout(() => {
     moveCamera('down'); // Move to phase 2
-  }, 28000);
+  }, 27900);
 
   setTimeout(() => {
     video.pause();
@@ -176,7 +157,7 @@ function moveCamera(direction) {
     if (currentPhase === 1) {
       isAnimating = true;
       gsap.to(camera.position, {
-        z: 6.1, y: -1.8, duration: 28, onComplete: () => {
+        z: 7, y: -2.16, duration: 2, onComplete: () => {
           isAnimating = false;
           moveCamera('down'); // Automatically move to phase 2
         }
@@ -187,33 +168,35 @@ function moveCamera(direction) {
     if (currentPhase === 2) {
       isAnimating = true;
       video.pause();
-
+    
       const rotationDuration = 1.5; // Duration for full rotation
       const zoomDuration = 1.5; // Duration for zoom effect
-      const endZoom = 6.1; // Final zoom position
-
-      const startPosition = { angle: 0, zoom: 7 };
+      const endZoom = 8; // Final zoom position
+    
+      const startPosition = { zoom:7, x: 0, y: -2.12, rotationX: Math.PI / 25};
       const endPosition = { angle: Math.PI * 2, zoom: endZoom };
-
+    
       const tl = gsap.timeline({
         onComplete: () => {
           isAnimating = false;
           showButton(); // Show the button after the animation completes
         }
       });
-
+    
       tl.to(startPosition, {
         angle: endPosition.angle,
         zoom: endPosition.zoom,
         duration: rotationDuration,
-        ease: "power4.easeInOut",
+        ease: "power2.easeInOut",
         onUpdate: () => {
           camera.position.x = startPosition.zoom * Math.sin(startPosition.angle);
           camera.position.z = startPosition.zoom * Math.cos(startPosition.angle);
+          camera.position.y = startPosition.y;
+          camera.rotation.x = startPosition.rotationX; 
           camera.lookAt(phone.position);
         }
       });
-
+    
       tl.to(camera.position, {
         z: endZoom,
         duration: zoomDuration,
