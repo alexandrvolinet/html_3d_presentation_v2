@@ -10,7 +10,10 @@
 			"nodes":[
 				0,
 				1,
-				2
+				2,
+				3,
+				4,
+				5
 			]
 		}
 	],
@@ -19,10 +22,10 @@
 			"mesh":0,
 			"name":"Circle",
 			"rotation":[
-				0.7071068286895752,
+				0.70710688829422,
 				0,
 				0,
-				0.7071068286895752
+				0.7071066498756409
 			],
 			"translation":[
 				0,
@@ -34,15 +37,15 @@
 			"mesh":1,
 			"name":"Text.001",
 			"rotation":[
-				0.6327269077301025,
+				0.6327269673347473,
 				0.3156844675540924,
-				0.31568455696105957,
-				0.6327269673347473
+				0.3156844973564148,
+				0.6327269077301025
 			],
 			"scale":[
 				0.09172364324331284,
-				0.09172364324331284,
-				0.09172364324331284
+				0.09172365069389343,
+				0.09172365814447403
 			],
 			"translation":[
 				-0.00256230216473341,
@@ -63,6 +66,61 @@
 				0.04945391044020653,
 				-0.02528109773993492
 			]
+		},
+		{
+			"mesh":3,
+			"name":"Text.002",
+			"rotation":[
+				-0.31625455617904663,
+				-0.6330112814903259,
+				0.6324419975280762,
+				0.31511402130126953
+			],
+			"scale":[
+				0.09172365814447403,
+				0.09172365069389343,
+				0.09172364324331284
+			],
+			"translation":[
+				0.010323221795260906,
+				0.013386760838329792,
+				0.016983993351459503
+			]
+		},
+		{
+			"mesh":4,
+			"name":"Plane.002",
+			"rotation":[
+				0,
+				0.9999995827674866,
+				0,
+				0.0009012493537738919
+			],
+			"scale":[
+				0.5666971206665039,
+				0.5666971802711487,
+				0.5666971206665039
+			],
+			"translation":[
+				-0.018262090161442757,
+				0.05155722424387932,
+				0.016209259629249573
+			]
+		},
+		{
+			"mesh":5,
+			"name":"Circle.001",
+			"rotation":[
+				0.0006372890202328563,
+				0.7071064710617065,
+				-0.7071065306663513,
+				0.0006372890202328563
+			],
+			"translation":[
+				0.007720694877207279,
+				0.0021033138036727905,
+				0.03929886966943741
+			]
 		}
 	],
 	"materials":[
@@ -82,6 +140,32 @@
 		{
 			"doubleSided":true,
 			"name":"Gold.bump",
+			"pbrMetallicRoughness":{
+				"baseColorFactor":[
+					0.7991032600402832,
+					0.38642939925193787,
+					0.0722719058394432,
+					1
+				],
+				"roughnessFactor":0.25
+			}
+		},
+		{
+			"doubleSided":true,
+			"name":"Gold.001",
+			"pbrMetallicRoughness":{
+				"baseColorFactor":[
+					0.7991032600402832,
+					0.38642939925193787,
+					0.0722719058394432,
+					1
+				],
+				"roughnessFactor":0.25
+			}
+		},
+		{
+			"doubleSided":true,
+			"name":"Gold.bump.001",
 			"pbrMetallicRoughness":{
 				"baseColorFactor":[
 					0.7991032600402832,
@@ -142,6 +226,57 @@
 					},
 					"indices":15,
 					"material":0
+				}
+			]
+		},
+		{
+			"name":"Text.001",
+			"primitives":[
+				{
+					"attributes":{
+						"POSITION":16,
+						"NORMAL":17,
+						"TEXCOORD_0":18
+					},
+					"indices":11,
+					"material":2
+				}
+			]
+		},
+		{
+			"name":"Plane.001",
+			"primitives":[
+				{
+					"attributes":{
+						"POSITION":19,
+						"NORMAL":20,
+						"TEXCOORD_0":21
+					},
+					"indices":15,
+					"material":2
+				}
+			]
+		},
+		{
+			"name":"Circle.001",
+			"primitives":[
+				{
+					"attributes":{
+						"POSITION":22,
+						"NORMAL":23,
+						"TEXCOORD_0":24
+					},
+					"indices":3,
+					"material":2
+				},
+				{
+					"attributes":{
+						"POSITION":25,
+						"NORMAL":26,
+						"TEXCOORD_0":27
+					},
+					"indices":7,
+					"material":3
 				}
 			]
 		}
@@ -282,6 +417,118 @@
 			"componentType":5123,
 			"count":20448,
 			"type":"SCALAR"
+		},
+		{
+			"bufferView":16,
+			"componentType":5126,
+			"count":36228,
+			"max":[
+				9.80382251739502,
+				0.025003105401992798,
+				9.96109390258789
+			],
+			"min":[
+				-9.941938400268555,
+				-0.025002142414450645,
+				-9.79670238494873
+			],
+			"type":"VEC3"
+		},
+		{
+			"bufferView":17,
+			"componentType":5126,
+			"count":36228,
+			"type":"VEC3"
+		},
+		{
+			"bufferView":18,
+			"componentType":5126,
+			"count":36228,
+			"type":"VEC2"
+		},
+		{
+			"bufferView":19,
+			"componentType":5126,
+			"count":3731,
+			"max":[
+				0.7858538627624512,
+				0.9717768430709839,
+				0.032264143228530884
+			],
+			"min":[
+				-0.8080178499221802,
+				-1.1032634973526,
+				-0.03773602843284607
+			],
+			"type":"VEC3"
+		},
+		{
+			"bufferView":20,
+			"componentType":5126,
+			"count":3731,
+			"type":"VEC3"
+		},
+		{
+			"bufferView":21,
+			"componentType":5126,
+			"count":3731,
+			"type":"VEC2"
+		},
+		{
+			"bufferView":22,
+			"componentType":5126,
+			"count":452,
+			"max":[
+				1.0152721405029297,
+				0.04832382872700691,
+				1.0152727365493774
+			],
+			"min":[
+				-1.0152721405029297,
+				-1.1175870895385742e-08,
+				-1.015271544456482
+			],
+			"type":"VEC3"
+		},
+		{
+			"bufferView":23,
+			"componentType":5126,
+			"count":452,
+			"type":"VEC3"
+		},
+		{
+			"bufferView":24,
+			"componentType":5126,
+			"count":452,
+			"type":"VEC2"
+		},
+		{
+			"bufferView":25,
+			"componentType":5126,
+			"count":112,
+			"max":[
+				0.9477273225784302,
+				0.022609837353229523,
+				0.9477280378341675
+			],
+			"min":[
+				-0.9477273225784302,
+				0.022609837353229523,
+				-0.9477266669273376
+			],
+			"type":"VEC3"
+		},
+		{
+			"bufferView":26,
+			"componentType":5126,
+			"count":112,
+			"type":"VEC3"
+		},
+		{
+			"bufferView":27,
+			"componentType":5126,
+			"count":112,
+			"type":"VEC2"
 		}
 	],
 	"bufferViews":[
@@ -380,12 +627,84 @@
 			"byteLength":40896,
 			"byteOffset":1657096,
 			"target":34963
+		},
+		{
+			"buffer":0,
+			"byteLength":434736,
+			"byteOffset":1697992,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":434736,
+			"byteOffset":2132728,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":289824,
+			"byteOffset":2567464,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":44772,
+			"byteOffset":2857288,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":44772,
+			"byteOffset":2902060,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":29848,
+			"byteOffset":2946832,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":5424,
+			"byteOffset":2976680,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":5424,
+			"byteOffset":2982104,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":3616,
+			"byteOffset":2987528,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":1344,
+			"byteOffset":2991144,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":1344,
+			"byteOffset":2992488,
+			"target":34962
+		},
+		{
+			"buffer":0,
+			"byteLength":896,
+			"byteOffset":2993832,
+			"target":34962
 		}
 	],
 	"buffers":[
 		{
-			"byteLength":1697992,
-			"uri":"coin.bin"
+			"byteLength":2994728,
+			"uri":"2coin.bin"
 		}
 	]
 }

@@ -96,8 +96,20 @@ additionalLight.position.set(-5, 0, 0);
 scene.add(additionalLight);
 
 // Background
-const backgroundColor = new THREE.Color(0x010912);
-scene.background = backgroundColor;
+const textureLoader = new THREE.TextureLoader();
+textureLoader.load('background.png', function(texture) {
+  const geometry = new THREE.SphereGeometry(600, 60, 40);
+  const material = new THREE.MeshBasicMaterial({
+    map: texture,
+    side: THREE.BackSide
+  });
+
+  const sphere = new THREE.Mesh(geometry, material);
+  sphere.position.set(0, 0, 0); // initial sphere position
+  sphere.rotation.y = Math.PI / 1; // rotate sphere left
+  sphere.rotation.x = Math.PI / -5; //rotate sphere down
+  scene.add(sphere);
+});
 
 // Create pedestals with different sizes
 const pedestalGeometry1 = new THREE.CylinderGeometry(1.2, 1.2, 2, 64);
@@ -119,24 +131,32 @@ pedestal3.receiveShadow = true;
 scene.add(pedestal1, pedestal2, pedestal3);
 
 // Load coin model and add to scene
-const coinMaterial = new THREE.MeshStandardMaterial({ color: 0x0059B3, roughness: 0.8, metalness: 0.1 }); // Matte finish
+const coinMaterial = new THREE.MeshStandardMaterial({ color: 0x0080FF, roughness: 0.1, metalness: 0.4 });
 const coinLoader = new GLTFLoader();
 let coins = [];
-coinLoader.load('/2coin.gltf', function (gltf) {
+coinLoader.load('/coin.gltf', function (gltf) {
   const positions = [
+
+    //right side
     [2, 0, 2],
     [2, 1, -2],
-    [2, -1, 1],
+    [2.5, -1, 1],
+    [3, 1, 0.5],
+    [2, 0, -2.5],
+    [2.5, -2, 1.9],
+    [1, 1, 1.5],
+    [0.2, 1.9, 0],
+
+    //left side
+    [-2, 0, 1.2],
     [-1, -1, -2],
-    [-3, -2, 2],
+    [-2, -1.7, 3],
     [-2, -1, 0],
     [-2, 1, -1],
-    [-2, 1, 2],
-    [3, 1, 0.5],
-    [-2, 0, 1.2],
-    [0.2, 1.9, 0],
-    [2, 0, -2.5],
+    [-2.5, 1, 2],
     [-0.4, 1.5, -1],
+    [-3.9, 0.4, 2],
+
   ];
 
   positions.forEach((position, index) => {
@@ -202,7 +222,7 @@ function randomizeCoinRotation(coin) {
 // Parameters for controlling timings
 const videoPauseTime = 27500; // Time in milliseconds to pause the video
 const buttonShowTime = 28100; // Time in milliseconds to show the button
-const transitionToLastPhaseDuration = 2500; //26500 Duration for the transition to the last phase in milliseconds
+const transitionToLastPhaseDuration = 26500; //26500 Duration for the transition to the last phase in milliseconds
 
 // Video loading event
 video.addEventListener('canplaythrough', () => {
