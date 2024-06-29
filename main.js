@@ -1,7 +1,3 @@
-import * as THREE from 'three';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import gsap from 'gsap';
-
 // Setup
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(25, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -18,7 +14,7 @@ camera.rotation.x = Math.PI / 25; // Tilt camera up
 renderer.render(scene, camera);
 
 // Load the phone model
-const loader = new GLTFLoader();
+const loader = new THREE.GLTFLoader();
 let phone;
 let videoTexture;
 
@@ -40,7 +36,7 @@ function checkAssetsLoaded() {
   }
 }
 
-loader.load('/scene.gltf', function (gltf) {
+loader.load('assets/scene.gltf', function (gltf) {
   phone = gltf.scene;
   phone.castShadow = true; // Enable shadow casting for the phone
   scene.add(phone);
@@ -97,21 +93,21 @@ scene.add(additionalLight);
 
 // Background
 const textureLoader = new THREE.TextureLoader();
-textureLoader.load('background.png', function(texture) {
-  const geometry = new THREE.SphereGeometry(600, 60, 40);
+textureLoader.load('assets/background.png', function(texture) {
+  const geometry = new THREE.SphereGeometry(300, 20, 40);
   const material = new THREE.MeshBasicMaterial({
     map: texture,
     side: THREE.BackSide
   });
 
   const sphere = new THREE.Mesh(geometry, material);
-  sphere.position.set(0, 0, 0); // initial sphere position
-  sphere.rotation.y = Math.PI / 1; // rotate sphere left
-  sphere.rotation.x = Math.PI / -5; //rotate sphere down
+  sphere.position.set(0, 0, 0); // Set sphere position at the center of the scene
+  sphere.rotation.y = Math.PI / 4; // Rotate sphere around Y-axis (to shift the texture center to the left)
+  sphere.rotation.x = Math.PI / 10; // Rotate sphere around X-axis (to shift the texture center upwards)
   scene.add(sphere);
 });
 
-// Create pedestals with different sizes
+// Create pedestals
 const pedestalGeometry1 = new THREE.CylinderGeometry(1.2, 1.2, 2, 64);
 const pedestalGeometry2 = new THREE.CylinderGeometry(2.2, 2.2, 2, 64);
 const pedestalGeometry3 = new THREE.CylinderGeometry(2.3, 2.27, 2, 64);
@@ -130,75 +126,106 @@ pedestal3.receiveShadow = true;
 
 scene.add(pedestal1, pedestal2, pedestal3);
 
-// Load coin model and add to scene
-const coinMaterial = new THREE.MeshStandardMaterial({ color: 0x0080FF, roughness: 0.1, metalness: 0.4 });
-const coinLoader = new GLTFLoader();
-let coins = [];
-coinLoader.load('/coin.gltf', function (gltf) {
-  const positions = [
+// Load models and add to scene
+const material = new THREE.MeshPhongMaterial({ color: 0x052D55 });
+const modelPaths = [
+  'assets/diamond.gltf',
+  'assets/untitled.gltf',
+  'assets/cube.gltf',
+  'assets/diamond.gltf',
+  'assets/cube.gltf',
+  'assets/diamond.gltf',
+  'assets/untitled.gltf',
+  'assets/untitled.gltf',
+  'assets/untitled.gltf',
+  'assets/cube.gltf',
+  'assets/diamond.gltf',
+  'assets/cube.gltf',
+  'assets/untitled.gltf',
+  'assets/cube.gltf',
+  'assets/diamond.gltf',
+  'assets/diamond.gltf',
+  'assets/diamond.gltf',
+  'assets/untitled.gltf',
+];
+const positions = [
+  // Right side
+  [2.7, 0, 2],
+  [1.9, 1.5, -1],
+  [2.2, -1.9, 2],
+  [3, 0, -2],
+  
+  // Left side
+  [-2.5, 0.8, -1.2],
+  [-2, -1, 1],
+  [-5, -1, -3.2],
+  [-3, -2, -2],
 
-    //right side
-    [2, 0, 2],
-    [2, 1, -2],
-    [2.5, -1, 1],
-    [3, 1, 0.5],
-    [2, 0, -2.5],
-    [2.5, -2, 1.9],
-    [1, 1, 1.5],
-    [0.2, 1.9, 0],
+  //additional
+  [-1, 2, -1],
+  [-3, 2, 1],
+  [-5.4, 2.7, -5],
+  [-6.4, 0.7, -4],
+  [6, -1, -4],
+  [6, 2.5, -4],
+  [-10.4, 2.7, -5],
+  [-8.4, -2.7, -3],
+  [9, -2, -3],
+  [5, 1, 1],
+];
+let objects = [];
 
-    //left side
-    [-2, 0, 1.2],
-    [-1, -1, -2],
-    [-2, -1.7, 3],
-    [-2, -1, 0],
-    [-2, 1, -1],
-    [-2.5, 1, 2],
-    [-0.4, 1.5, -1],
-    [-3.9, 0.4, 2],
+modelPaths.forEach((path, i) => {
+  loader.load(path, function (gltf) {
+    let object = gltf.scene;
 
-  ];
+    // Set size based on object type
+    if (path.includes('diamond')) {
+      object.scale.set(0.3, 0.3, 0.3);
+    } else if (path.includes('cube')) {
+      object.scale.set(0.1, 0.1, 0.1);
+    } else {
+      object.scale.set(0.3, 0.3, 0.3);
+    }
 
-  positions.forEach((position, index) => {
-    let coin = gltf.scene.clone();
-    coin.scale.set(0.3, 0.3, 0.3); // Set coin size
-    coin.position.set(...position); // Set initial position
+    object.position.set(...positions[i]); // Set initial position
 
-    // Apply the matte material to the coins
-    coin.traverse((child) => {
+    // Apply the material to the object
+    object.traverse((child) => {
       if (child.isMesh) {
-        child.material = coinMaterial.clone();
-        // Modify shader to reduce light intensity on the coins
-        child.material.onBeforeCompile = (shader) => {
-          shader.fragmentShader = shader.fragmentShader.replace(
-            'gl_FragColor = vec4( outgoingLight, diffuseColor.a );',
-            `
-              outgoingLight *= 0.3; // Reduce the light intensity
-              gl_FragColor = vec4( outgoingLight, diffuseColor.a );
-            `
-          );
-        };
+        child.material = material.clone();
       }
     });
 
-    scene.add(coin);
-    coins.push(coin);
-  });
+    scene.add(object);
+    objects.push(object);
 
-  // Start the coin animation after loading
-  coins.forEach(coin => randomizeCoinRotation(coin));
-}, undefined, function (error) {
-  console.error(error);
+    // Start the object animation after loading
+    randomizeObjectRotation(object, i);
+  }, undefined, function (error) {
+    console.error(error);
+  });
 });
 
-// Function to create random rotation for each coin
-function randomizeCoinRotation(coin) {
+// Function to create random rotation for each object
+function randomizeObjectRotation(object, index) {
   let axis1 = ['x', 'y', 'z'][Math.floor(Math.random() * 3)];
   let axis2 = ['x', 'y', 'z'].filter(axis => axis !== axis1)[Math.floor(Math.random() * 2)];
-  let duration1 = Math.random() * 5 + 10; // Random duration between 10 and 15 seconds
-  let duration2 = Math.random() * 5 + 10; // Random duration between 10 and 15 seconds
 
-  gsap.to(coin.rotation, {
+  // Determine duration based on the object group
+  let duration1, duration2;
+  if (index % 3 === 0) {
+    duration1 = Math.random() * 5 + 20; // Random duration between 20 and 25 seconds
+    duration2 = Math.random() * 5 + 20;
+  } else if (index % 3 === 1) {
+    duration1 = Math.random() * 5 + 50; // Random duration between 50 and 55 seconds
+    duration2 = Math.random() * 5 + 50;
+  } else {
+    duration1 = Math.random() * 5 + 30; // Random duration between 30 and 35 seconds
+    duration2 = Math.random() * 5 + 30;
+  }
+
+  gsap.to(object.rotation, {
     [axis1]: Math.PI * 2,
     duration: duration1,
     repeat: -1,
@@ -206,12 +233,10 @@ function randomizeCoinRotation(coin) {
     onRepeat: () => {
       axis1 = ['x', 'y', 'z'][Math.floor(Math.random() * 3)];
       axis2 = ['x', 'y', 'z'].filter(axis => axis !== axis1)[Math.floor(Math.random() * 2)];
-      duration1 = Math.random() * 5 + 10;
-      duration2 = Math.random() * 5 + 10;
     }
   });
 
-  gsap.to(coin.rotation, {
+  gsap.to(object.rotation, {
     [axis2]: Math.PI * 2,
     duration: duration2,
     repeat: -1,
@@ -221,8 +246,8 @@ function randomizeCoinRotation(coin) {
 
 // Parameters for controlling timings
 const videoPauseTime = 27500; // Time in milliseconds to pause the video
-const buttonShowTime = 28100; // Time in milliseconds to show the button
-const transitionToLastPhaseDuration = 26500; //26500 Duration for the transition to the last phase in milliseconds
+const buttonShowTime = 27000; // Time in milliseconds to show the button
+const transitionToLastPhaseDuration = 25600; // Duration for the transition to the last phase in milliseconds
 
 // Video loading event
 video.addEventListener('canplaythrough', () => {
@@ -236,12 +261,14 @@ let isAnimating = false;
 let timer = null;
 let phase2Timeout = null;
 let animationStarted = false; // Flag to track if the animation has started
+let buttonVisible = false; // Flag to track button visibility
 
 function moveCamera(direction) {
   if (phone && !isAnimating) {
     if (direction === 'down' && currentPhase < 2) {
       currentPhase++;
     } else if (direction === 'up' && currentPhase > 0) {
+      if (currentPhase === 2 && !buttonVisible) return; // Prevent scrolling up in phase 2 until the button is fully visible
       currentPhase--;
     }
 
@@ -266,37 +293,40 @@ function moveCamera(direction) {
     // Phase 2: Rotate camera around the phone with rotation and zoom animation
     if (currentPhase === 2) {
       isAnimating = true;
-    
-      const rotationDuration = 1.5; // Duration for full rotation
-      const zoomDuration = 1.5; // Duration for zoom effect
+
+      const rotationDuration = 3; // Duration for full rotation
+      const zoomDuration = 3; // Duration for zoom effect
       const endZoom = 11; // Final zoom position
-    
+
       const startPosition = { angle: 0, zoom: 12 };
-    
+
+      // Define custom exponential easing
+      CustomEase.create("customEase", "M0,0 C0,0 0.464,0.019 0.5,0.6 0.518,1.009 1,1 1,1 ");
+
       const tl = gsap.timeline({
         onComplete: () => {
           isAnimating = false;
           showButton(); // Show the button after the animation completes
         }
       });
-    
+
       tl.to(startPosition, {
         angle: Math.PI * 2,
         zoom: endZoom,
         duration: rotationDuration,
-        ease: "power2.easeInOut",
+        ease: "customEase", // Use the custom exponential ease
         onUpdate: () => {
           camera.position.x = startPosition.zoom * Math.sin(startPosition.angle);
           camera.position.z = startPosition.zoom * Math.cos(startPosition.angle);
-           // Keep the camera y position constant
-           camera.lookAt(phone.position.x, -0.49, phone.position.z);
+          // Keep the camera y position constant
+          camera.lookAt(phone.position.x, -0.49, phone.position.z);
         }
       });
-    
+
       tl.to(camera.position, {
         z: endZoom,
         duration: zoomDuration,
-        ease: "power4.easeInOut",
+        ease: "customEase", // Use the custom exponential ease
         onUpdate: () => {
           camera.lookAt(phone.position.x, -0.49, phone.position.z);
         }
@@ -306,41 +336,62 @@ function moveCamera(direction) {
   }
 }
 
+function changeObjectColors(startColor, endColor) {
+  objects.forEach(object => {
+    object.traverse((child) => {
+      if (child.isMesh) {
+        gsap.to(child.material.color, {
+          r: endColor.r,
+          g: endColor.g,
+          b: endColor.b,
+          duration: 3,
+          ease: "power2.inOut"
+        });
+      }
+    });
+  });
+}
+
 function showButton() {
   const button = document.getElementById('button');
   button.style.display = 'block';
   setTimeout(() => {
     button.style.opacity = 1;
+    buttonVisible = true; // Set the flag to true when the button becomes visible
   }, 100); // Slight delay to ensure the display property is set before transitioning opacity
 }
 
 function hideButton() {
   const button = document.getElementById('button');
   button.style.opacity = 0;
+  buttonVisible = false; // Set the flag to false when the button starts hiding
   setTimeout(() => {
     button.style.display = 'none';
-  }, 500); // Wait for opacity transition before hiding
+  }, 200); // Wait for opacity transition before hiding
 }
 
 window.addEventListener('wheel', (event) => {
   if (event.deltaY > 0 && currentPhase === 0 && !animationStarted) {
     animationStarted = true; // Set the flag to indicate animation has started
     video.play();
-    
+
+    changeObjectColors(new THREE.Color(0x052D55), new THREE.Color(0x01080F)); // Start changing colors of the objects
+
     setTimeout(() => {
       moveCamera('down'); // Move to phase 2
     }, videoPauseTime - transitionToLastPhaseDuration);
-  
+
     setTimeout(() => {
       video.pause();
     }, videoPauseTime);
-  
+
     setTimeout(() => {
       showButton(); // Show the button
     }, buttonShowTime);
-    
+
     moveCamera('down');
   } else if (event.deltaY < 0 && currentPhase === 2) {
+    if (!buttonVisible) return; // Prevent scrolling up until the button is fully visible
     resetToInitialState(); // Reset to initial state
   } else if (event.deltaY < 0 && currentPhase === 0) {
     video.pause();
@@ -364,21 +415,24 @@ window.addEventListener('touchend', () => {
   if (touchEndY < touchStartY && currentPhase === 0 && !animationStarted) {
     animationStarted = true; // Set the flag to indicate animation has started
     video.play();
-    
+
+    changeObjectColors(new THREE.Color(0x052D55), new THREE.Color(0x01080F)); // Start changing colors of the objects
+
     setTimeout(() => {
       moveCamera('down'); // Move to phase 2
     }, videoPauseTime - transitionToLastPhaseDuration);
-  
+
     setTimeout(() => {
       video.pause();
     }, videoPauseTime);
-  
+
     setTimeout(() => {
       showButton(); // Show the button
     }, buttonShowTime);
-    
+
     moveCamera('down');
   } else if (touchEndY > touchStartY && currentPhase === 2) {
+    if (!buttonVisible) return; // Prevent scrolling up until the button is fully visible
     resetToInitialState(); // Reset to initial state
   } else if (touchEndY > touchStartY && currentPhase === 0) {
     video.pause();
@@ -397,6 +451,9 @@ function resetToInitialState() {
     }
   });
   camera.rotation.x = Math.PI / 25; // Reset camera rotation
+
+  // Change colors back to the original color
+  changeObjectColors(new THREE.Color(0x01080F), new THREE.Color(0x052D55));
 }
 
 // Animation Loop

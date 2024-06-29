@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>3d presentation</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -43,7 +43,6 @@
       z-index: 10;
       opacity: 0;
       transition: opacity 0.3s ease-in-out;
-      box-shadow: 0px 0px 25px 0px #007bff;
       font-family: "Roboto", sans-serif;
       font-weight: 400;
     }
@@ -76,10 +75,10 @@
   <div id="loading-screen">Loading...</div>
   <canvas id="bg"></canvas>
   <video id="video" playsinline autoplay loop muted>
-    <source src="video.mp4" type="video/mp4">
+    <source src="assets/video.mp4" type="video/mp4">
   </video>
   <a id="button" class="pulsate" href="https://t.me/CoinpaymentsGroupBot">@CoinpaymentsGroupBot</a>
-  <script type="module">
+  <script>
     function calculateLeftPercentage(screenWidth) {
       const x0 = 320;
       const y0 = 50.7;
@@ -89,16 +88,47 @@
       return y0 + (y1 - y0) * (screenWidth - x0) / (x1 - x0);
     }
 
+    function calculatePadding(screenWidth) {
+      const minScreen = 320;
+      const maxScreen = 3760;
+      const minPadding = { top: 10, side: 10 };
+      const maxPadding = { top: 25, side: 25 };
+
+      const topPadding = minPadding.top + (maxPadding.top - minPadding.top) * (screenWidth - minScreen) / (maxScreen - minScreen);
+      const sidePadding = minPadding.side + (maxPadding.side - minPadding.side) * (screenWidth - minScreen) / (maxScreen - minScreen);
+
+      return { top: topPadding, side: sidePadding };
+    }
+
+    function calculateFontSize(screenWidth) {
+      const minScreen = 320;
+      const maxScreen = 3760;
+      const minFontSize = 11;
+      const maxFontSize = 27;
+
+      return minFontSize + (maxFontSize - minFontSize) * (screenWidth - minScreen) / (maxScreen - minScreen);
+    }
+
     function updateButtonPosition() {
       const screenWidth = window.innerWidth;
       const leftPercentage = calculateLeftPercentage(screenWidth);
       const button = document.getElementById('button');
       button.style.left = leftPercentage + '%';
+
+      const padding = calculatePadding(screenWidth);
+      button.style.padding = `${padding.top}px ${padding.side}px`;
+
+      const fontSize = calculateFontSize(screenWidth);
+      button.style.fontSize = `${fontSize}px`;
     }
 
     window.addEventListener('resize', updateButtonPosition);
     window.addEventListener('load', updateButtonPosition);
   </script>
-  <script type="module" src="/main.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/CustomEase.min.js"></script>
+  <script src="/main.js"></script>
 </body>
 </html>
