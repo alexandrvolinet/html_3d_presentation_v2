@@ -245,9 +245,9 @@ function randomizeObjectRotation(object, index) {
 }
 
 // Parameters for controlling timings
-const videoPauseTime = 27500; // Time in milliseconds to pause the video
-const buttonShowTime = 27000; // Time in milliseconds to show the button
-const transitionToLastPhaseDuration = 25600; // Duration for the transition to the last phase in milliseconds
+const videoPauseTime = 7500; // Time in milliseconds to pause the video
+const buttonShowTime = 7000; // Time in milliseconds to show the button
+const transitionToLastPhaseDuration = 5600; // Duration for the transition to the last phase in milliseconds
 
 // Video loading event
 video.addEventListener('canplaythrough', () => {
